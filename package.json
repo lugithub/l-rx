@@ -1,0 +1,30 @@
+{
+  "name": "l-rx",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "watch": {
+    "build": "{src,test}/*.js"
+  },
+  "scripts": {
+    "watch": "npm-watch",
+    "build": "webpack && node ./dist/bundle.js" ,
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lugithub/l-rx.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lugithub/l-rx/issues"
+  },
+  "homepage": "https://github.com/lugithub/l-rx#readme",
+  "dependencies": {
+    "rxjs": "^5.5.6"
+  },
+  "devDependencies": {
+    "webpack": "^3.10.0"
+  }
+}
