@@ -1,20 +1,13 @@
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/of';
-import 'rxjs/add/operator/map';
+import { interval } from 'rxjs/observable/interval';
 
-let stream$ = Observable
-  .of(1,2,3)
-  .map(x => {
-    throw new Error(x);
-    return x + '!!!';
-  });
+// import 'rxjs/add/operator/map';
+// interval(1000).map(
+//   x => x + '!'
+// ).subscribe(console.log, console.error, console.log);
 
-// stream$.subscribe((val) => {
-//   console.log(val) // 1!!! 2!!! 3!!!
-// })
-
-stream$.subscribe({
-  next: console.log,
-  error: console.log,
-  complete: console.log
-});
+import {
+  map
+} from 'rxjs/operators';
+interval(1000).pipe(
+  map(x => x + '!')
+).subscribe(console.log, console.error, console.log);
