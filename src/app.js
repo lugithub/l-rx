@@ -7,18 +7,15 @@ import { interval } from 'rxjs/observable/interval';
 
 import {
   map,
+  exhaustMap,
+  take,
   catchError,
   tap
 } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
-interval(1000).pipe(
-  tap(x => {
-    if (x === 3) {
-      throw 'error' + x;
-    }
-    console.log('tap', x);}),
-  //catchError((error, caught) => caught),
-  catchError(error => of(100)),
-  map(x => x + '!'),
-
+interval(100).pipe(
+  exhaustMap(y => interval(1000).pipe(
+    map(z => y +'-' + z),
+    take(10)
+  ))
 ).subscribe(console.log, console.error, console.log);
