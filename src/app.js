@@ -1,20 +1,40 @@
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/of';
-import 'rxjs/add/operator/map';
+// import { Observable } from 'rxjs/Observable';
+// import 'rxjs/add/observable/interval';
+// import 'rxjs/add/observable/of';
+// import 'rxjs/add/operator/map';
+// import 'rxjs/add/operator/take';
+// import 'rxjs/add/operator/combineAll';
+//
+// const source = Observable.interval(1000).take(2);
+//
+// const example = source.map(val =>
+//   Observable.interval(1000)
+//     .map(i => `Result (${val}): ${i}`)
+//     .take(5)
+// );
+//
+// const combined = example.combineAll();
+//
+// const subscribe = combined.subscribe(val => console.log(val));
 
-let stream$ = Observable
-  .of(1,2,3)
-  .map(x => {
-    throw new Error(x);
-    return x + '!!!';
-  });
+import { interval } from 'rxjs/observable/interval';
+import { map, take, combineAll } from 'rxjs/operators';
 
-// stream$.subscribe((val) => {
-//   console.log(val) // 1!!! 2!!! 3!!!
-// })
+const source = interval(1000).pipe(
+  take(2)
+);
 
-stream$.subscribe({
-  next: console.log,
-  error: console.log,
-  complete: console.log
-});
+const example = source.pipe(
+  map(val =>
+    interval(1000).pipe(
+      map(i => `Result (${val}): ${i}`),
+      take(5)
+    )
+  )
+);
+
+const combined = example.pipe(
+  combineAll()
+);
+
+const subscribe = combined.subscribe(val => console.log(val));
