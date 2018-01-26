@@ -1,25 +1,15 @@
-import { Observable } from 'rxjs/observable';
-import { scan, throttleTime, map } from 'rxjs/operators';
+import { ajax } from 'rxjs/observable/dom/ajax';
+import { catchError } from 'rxjs/operators/catchError';
+import { of } from 'rxjs/observable/of';
 
-var button = document.querySelector('button');
-var observable = Observable.create(observer => {
-  observer.next(1);
-  observer.next(2);
-  observer.next(3);
-  const id = setInterval(() => {
-    observer.next(4);
-    observer.complete();
-  }, 1000);
+var observable = ajax({
+      url : 'https://www.google.com/',
+      //crossDomain: true,
+      createXHR: function () {
+        return new XMLHttpRequest();
+     }
+}).pipe(
+  catchError(x => of(x.message))
+);
 
-  return () => {
-    clearInterval(id);
-  };
-});
-
-const s = observable.subscribe(x => {
-  console.log(x);
-}, console.log, () => console.log('complete'));
-
-setTimeout(() => {
-  s.unsubscribe();
-}, 10000);
+observable.subscribe(console.log);
