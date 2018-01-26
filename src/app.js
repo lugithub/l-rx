@@ -1,15 +1,10 @@
-// import { map, take, combineAll } from 'rxjs/operators';
-
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/fromEvent';
+import { fromEvent } from 'rxjs/observable/fromEvent';
+import { scan, throttleTime, map } from 'rxjs/operators';
 
 var button = document.querySelector('button');
-Observable.fromEvent(button, 'click')
-  .subscribe(() => console.log('Clicked!'));
-
-
-// import { fromEvent } from 'rxjs/observable/fromEvent';
-//
-// var button = document.querySelector('button');
-// fromEvent(button, 'click')
-//   .subscribe(() => console.log('Clicked!'));
+fromEvent(button, 'click')
+  .pipe(
+    throttleTime(3000),
+    map(event => event.clientX),
+    scan((sum, value) => sum + value, 0))
+  .subscribe(sum => console.log(`${sum}`));
