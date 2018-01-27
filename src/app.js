@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs/observable';
+import { Observable } from 'rxjs/Observable';
 import { scan, throttleTime, map } from 'rxjs/operators';
 
 var button = document.querySelector('button');
