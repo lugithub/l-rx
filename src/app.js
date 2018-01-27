@@ -1,15 +1,13 @@
-import { ajax } from 'rxjs/observable/dom/ajax';
-import { catchError } from 'rxjs/operators/catchError';
-import { of } from 'rxjs/observable/of';
+import { defer } from 'rxjs/observable/defer';
+import { fromEvent } from 'rxjs/observable/fromEvent';
+import { interval } from 'rxjs/observable/interval';
 
-var observable = ajax({
-      url : 'https://www.google.com/',
-      //crossDomain: true,
-      createXHR: function () {
-        return new XMLHttpRequest();
-     }
-}).pipe(
-  catchError(x => of(x.message))
-);
+var clicksOrInterval = defer(function () {
+  if (Math.random() > 0.5) {
+    return fromEvent(document, 'click');
+  } else {
+    return interval(1000);
+  }
+});
 
-observable.subscribe(console.log);
+clicksOrInterval.subscribe(x => console.log(x));
