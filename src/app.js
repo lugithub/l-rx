@@ -1,25 +1,12 @@
-import { Observable } from 'rxjs/Observable';
-import { scan, throttleTime, map } from 'rxjs/operators';
+import { fromEvent } from 'rxjs/observable/fromEvent';
+import { interval } from 'rxjs/observable/interval';
 
-var button = document.querySelector('button');
-var observable = Observable.create(observer => {
-  observer.next(1);
-  observer.next(2);
-  observer.next(3);
-  const id = setInterval(() => {
-    observer.next(4);
-    observer.complete();
-  }, 1000);
+import { buffer, bufferCount } from 'rxjs/operators';
 
-  return () => {
-    clearInterval(id);
-  };
-});
+var clicks = fromEvent(document, 'click');
+var intervals = interval(1000);
+var buffered = intervals.pipe(
+  bufferCount(3, 5)
+);
 
-const s = observable.subscribe(x => {
-  console.log(x);
-}, console.log, () => console.log('complete'));
-
-setTimeout(() => {
-  s.unsubscribe();
-}, 10000);
+buffered.subscribe(x => console.log(x));
