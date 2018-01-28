@@ -1,13 +1,12 @@
-import { defer } from 'rxjs/observable/defer';
-import { of } from 'rxjs/observable/of';
+import { fromEvent } from 'rxjs/observable/fromEvent';
 import { interval } from 'rxjs/observable/interval';
-import { empty } from 'rxjs/observable/empty';
-import { mergeMap } from 'rxjs/operators/mergeMap';
 
-var intervalObservable = interval(1000);
-var result = intervalObservable.pipe(
-  mergeMap(x =>
-    x % 2 === 1 ? of('a', 'b', 'c') : empty()
-  )
+import { concatMap, take } from 'rxjs/operators';
+
+var clicks = fromEvent(document, 'click');
+var result = clicks.pipe(
+  concatMap(ev => interval(1000).pipe(
+    take(3)
+  ))
 );
-result.subscribe(x => console.log(x), console.log, () => console.log('complete'));
+result.subscribe(x => console.log(x));
