@@ -1,8 +1,10 @@
-import { of } from 'rxjs/observable/of';
+import { of } from 'rxjs';
 import { groupBy, mergeMap, scan, last } from 'rxjs/operators';
 
 of({id: 1, name: 'aze1'},
    {id: 2, name: 'sf2'},
+
+
    {id: 2, name: 'dg2'},
    {id: 1, name: 'erg1'},
    {id: 1, name: 'df1'},
