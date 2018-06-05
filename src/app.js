@@ -1,24 +1,13 @@
-import { of } from 'rxjs';
-import { groupBy, mergeMap, scan, last } from 'rxjs/operators';
+import { of, throwError } from 'rxjs';
+import { map, mergeMap, scan, catchError, filter } from 'rxjs/operators';
 
-of({id: 1, name: 'aze1'},
-   {id: 2, name: 'sf2'},
+const source = of(0);
 
-
-   {id: 2, name: 'dg2'},
-   {id: 1, name: 'erg1'},
-   {id: 1, name: 'df1'},
-   {id: 2, name: 'sfqfb2'},
-   {id: 3, name: 'qfs3'},
-   {id: 2, name: 'qsgqsfg2'}
- ).pipe(
-   groupBy(p => p.id)
-)
-.subscribe(group => {
-  console.log(group);
-  group.pipe(
-    scan((acc, cur) => [...acc, cur], []),
-    last()
-  )
-  .subscribe(console.log);
-});
+source.pipe(
+  map(x => x + x),
+  mergeMap(n => of(n + 1, n + 2).pipe(
+    filter(x => x % 1 == 0),
+    scan((acc, x) => acc + x, 0),
+  )),
+  catchError(err => of(`error ${err} found`)),
+ ).subscribe(console.log); 
