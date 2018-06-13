@@ -1,13 +1,39 @@
-import { of, throwError } from 'rxjs';
-import { map, mergeMap, scan, catchError, filter } from 'rxjs/operators';
+import { Observable, interval, timer, Subscription, of } from "rxjs";
+import { combineLatest, map, take, takeUntil } from "rxjs/operators";
 
-const source = of(0);
+var observable = Observable.create(function (observer) {
+  observer.next(1);
+  observer.next(2);
+  observer.next(3);
+  const timerId = setTimeout(() => {
+    observer.next(4);
+  }, 3000);
 
-source.pipe(
-  map(x => x + x),
-  mergeMap(n => of(n + 1, n + 2).pipe(
-    filter(x => x % 1 == 0),
-    scan((acc, x) => acc + x, 0),
-  )),
-  catchError(err => of(`error ${err} found`)),
- ).subscribe(console.log); 
+  return function unsubscribe() {
+    clearTimeout(timerId);
+  };
+});
+
+console.log('just before subscribe');
+
+const subscription = observable.subscribe({
+  next: x => console.log('got value ' + x),
+  error: err => console.error('something wrong occurred: ' + err),
+  complete: () => console.log('done'),
+});
+
+subscription.add({
+  unsubscribe() {
+    console.log('teardown 1');
+  }
+})
+
+subscription.add({
+  unsubscribe() {
+    console.log('teardown 2');
+  }
+});
+
+console.log('just after subscribe');
+
+subscription.unsubscribe();
