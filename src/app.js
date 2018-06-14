@@ -1,27 +1,21 @@
 import { Observable, interval, timer, Subscription, of } from "rxjs";
 import { combineLatest, map, take, takeUntil } from "rxjs/operators";
 
-var observable = Observable.create(function (observer) {
-  observer.next(1);
-  observer.next(2);
-  observer.next(3);
-  const timerId = setTimeout(() => {
-    observer.next(4);
+var observable = Observable.create(function subscribe(observer) {
+  try {
+    observer.next(1);
+    observer.next(2);
+    observer.next(3);
     observer.complete();
-  }, 3000);
+  } catch (err) {
+    observer.error(err); // delivers an error if it caught one
+  }
 
-  return function unsubscribe() {
-    clearTimeout(timerId);
-  };
+  return () => {
+    console.log('unsubscribe');
+  }
 });
 
-console.log('just before subscribe');
-
-const subscription = observable.subscribe({
-  next: x => console.log('got value ' + x),
-  error: err => console.error('something wrong occurred: ' + err),
-  complete: () => console.log('done'),
-}).add(() => console.log('teardown'));
-
-console.log('just after subscribe');
-
+observable.subscribe(n => {
+  throw new Error(n);
+}, console.error, console.log);
