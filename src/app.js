@@ -16,6 +16,16 @@ var observable = Observable.create(function subscribe(observer) {
   }
 });
 
-observable.subscribe(n => {
-  throw new Error(n);
-}, console.error, console.log);
+try {
+  observable.subscribe(n => {
+    throw new Error(n);
+  }, err => {
+    console.error(err);
+  }, console.log);
+} catch (err) {
+  console.log(err);
+}
+
+window.onerror = function() {
+  console.log(arguments);
+}
