@@ -1,1 +1,1 @@
-# l-rx
+npm run watch build
