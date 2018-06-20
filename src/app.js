@@ -1,31 +1,12 @@
-import { Observable, interval, timer, Subscription, of } from "rxjs";
-import { combineLatest, map, take, takeUntil } from "rxjs/operators";
+import { fromEvent, Observable, Subject, ReplaySubject, interval, timer, Subscription, of, pipe } from "rxjs";
+import { combineLatest, map, mapTo, multicast, pluck, publish, refCount, scan, share, shareReplay, take, takeUntil, tap } from "rxjs/operators";
 
-var observable = Observable.create(function subscribe(observer) {
-  try {
-    observer.next(1);
-    observer.next(2);
-    observer.next(3);
-    observer.complete();
-  } catch (err) {
-    observer.error(err); // delivers an error if it caught one
-  }
+const complicatedLogic = pipe(
+  map(x => ++x),
+  map(x => x * 10),
+  take(5)
+);
 
-  return () => {
-    console.log('unsubscribe');
-  }
-});
+let obs = interval(1000).pipe(complicatedLogic);
+obs.subscribe(console.log, console.error, () => console.log('complete'));
 
-try {
-  observable.subscribe(n => {
-    throw new Error(n);
-  }, err => {
-    console.error(err);
-  }, console.log);
-} catch (err) {
-  console.log(err);
-}
-
-window.onerror = function() {
-  console.log(arguments);
-}
