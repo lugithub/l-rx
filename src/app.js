@@ -9,7 +9,7 @@ const mapped$ = source$.pipe(map(x => {
   }
   return x;
 }
-));
+)).pipe(catchError(err => of(err)));
 
 source$.subscribe(x => console.log('A', x));
 mapped$.subscribe(x => console.log('B', x));
