@@ -1,12 +1,16 @@
 import { fromEvent, Observable, Subject, ReplaySubject, interval, timer, Subscription, of, pipe } from "rxjs";
-import { combineLatest, map, mapTo, multicast, pluck, publish, refCount, scan, share, shareReplay, take, takeUntil, tap } from "rxjs/operators";
+import { catchError, combineLatest, map, mapTo, multicast, pluck, publish, refCount, retry, scan, share, shareReplay, take, takeUntil, tap } from "rxjs/operators";
 
-const complicatedLogic = pipe(
-  map(x => ++x),
-  map(x => x * 10),
-  take(5)
-);
+const source$ = interval(1000).pipe(share());
 
-let obs = interval(1000).pipe(complicatedLogic);
-obs.subscribe(console.log, console.error, () => console.log('complete'));
+const mapped$ = source$.pipe(map(x => {
+  if (x === 1) {
+    throw new Error('oops');
+  }
+  return x;
+}
+));
 
+source$.subscribe(x => console.log('A', x));
+mapped$.subscribe(x => console.log('B', x));
+source$.subscribe(x => console.log('C', x));
