@@ -22,7 +22,8 @@
   },
   "homepage": "https://github.com/lugithub/l-rx#readme",
   "dependencies": {
-    "rxjs": "^6.2.1"
+    "rxjs": "^6.2.1",
+    "rxjs-spy": "^7.0.2"
   },
   "devDependencies": {
     "npm-watch": "^0.3.0",
