@@ -1,4 +1,5 @@
 import {
+  EMPTY,  
   defer,
   fromEvent,
   Observable,
@@ -13,12 +14,14 @@ import {
   pipe
 } from "rxjs";
 import {
+  isEmpty,
   catchError,
   combineLatest,
   concat,
   map,
   mapTo,
   merge,
+  mergeMap,
   multicast,
   pluck,
   publish,
@@ -41,7 +44,22 @@ import {
 } from "rxjs/operators";
 import { POINT_CONVERSION_COMPRESSED } from "constants";
 
-interval(1000).pipe(
-  take(3)
-).forEach(console.log).then(() => console.log('all right'));
+function defaultObservableIfEmpty(defaultObservable) {
+  return source => source.pipe(
+    publish(shared => shared.pipe(
+      merge(
+        shared.pipe(isEmpty()).pipe(
+          mergeMap(isempty => isempty ?
+            defaultObservable :
+            EMPTY
+          )
+        ))
+    )));
+}
+
+ defaultObservableIfEmpty(interval(1000))(EMPTY).subscribe(console.log);
+ defaultObservableIfEmpty(interval(1000))(of(1)).subscribe(console.log);
+
+
+
 
