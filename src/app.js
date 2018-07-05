@@ -18,6 +18,7 @@ import {
   catchError,
   combineLatest,
   concat,
+  delay,
   map,
   mapTo,
   merge,
@@ -44,21 +45,33 @@ import {
 } from "rxjs/operators";
 import { POINT_CONVERSION_COMPRESSED } from "constants";
 
-function defaultObservableIfEmpty(defaultObservable) {
-  return source => source.pipe(
-    publish(shared => shared.pipe(
-      merge(
-        shared.pipe(isEmpty()).pipe(
-          mergeMap(isempty => isempty ?
-            defaultObservable :
-            EMPTY
-          )
-        ))
-    )));
+const source = defer(() => of(
+  Math.floor(Math.random() * 100)
+)).pipe(
+  // delay(0)
+);
+
+function observer(name) {
+  return {
+    next: value => console.log(`observer ${name}: ${value}`),
+    complete: () => console.log(`observer ${name}: complete`)
+  };
 }
 
- defaultObservableIfEmpty(interval(1000))(EMPTY).subscribe(console.log);
- defaultObservableIfEmpty(interval(1000))(of(1)).subscribe(console.log);
+// const m = source.pipe(
+//   multicast(new Subject()),
+//   refCount()
+// );
+
+const s = new Subject();
+
+const m = source.pipe(
+  multicast(() => s),
+  refCount()
+);
+
+m.subscribe(observer("a"));
+m.subscribe(observer("b"));
 
 
 
