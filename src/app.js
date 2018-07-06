@@ -2,6 +2,7 @@ import {
   EMPTY,  
   defer,
   fromEvent,
+  range,
   Observable,
   Subject,
   ReplaySubject,
@@ -10,7 +11,7 @@ import {
   Subscriber,
   Subscription,
   throwError,
-  of ,
+  of,
   pipe
 } from "rxjs";
 import {
@@ -19,6 +20,7 @@ import {
   combineLatest,
   concat,
   delay,
+  filter,
   map,
   mapTo,
   merge,
@@ -34,7 +36,8 @@ import {
   switchMap,
   take,
   takeUntil,
-  tap
+  tap,
+  toArray
 } from "rxjs/operators";
 import {
   create,
@@ -43,36 +46,14 @@ import {
 import {
   tag
 } from "rxjs/operators";
-import { POINT_CONVERSION_COMPRESSED } from "constants";
 
-const source = defer(() => of(
-  Math.floor(Math.random() * 100)
-)).pipe(
-  // delay(0)
+const value$ = range(0, 10).pipe(
+  filter(x => x % 2 === 0),
+  map(x => x + x),
+  scan((acc, x) => acc + x, 0),
+  toArray()
 );
 
-function observer(name) {
-  return {
-    next: value => console.log(`observer ${name}: ${value}`),
-    complete: () => console.log(`observer ${name}: complete`)
-  };
-}
-
-// const m = source.pipe(
-//   multicast(new Subject()),
-//   refCount()
-// );
-
-const s = new Subject();
-
-const m = source.pipe(
-  multicast(() => s),
-  refCount()
-);
-
-m.subscribe(observer("a"));
-m.subscribe(observer("b"));
-
-
-
+const value = value$.toPromise();
+value.then(x => console.log(x));
 
